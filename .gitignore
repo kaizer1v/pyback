@@ -1,0 +1,13 @@
+# ignore comressed files
+.tar
+.gztar
+.zip
+.bztar
+.xztar
+
+# ignore test folder
+test/
+
+# junk
+__pycache__
+.DS_Store

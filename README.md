@@ -1,6 +1,6 @@
 # pyback
 
-`python prj1.py /path/of/source_folder -d compressed_file_name`
+`python main.py /path/of/source_folder -d compressed_file_name`
 
 will compress the `source_folder` into a `compressed_file_name.tar` file along side the `source_folder`.
 
