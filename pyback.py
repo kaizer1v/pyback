@@ -17,6 +17,10 @@ def compress(src, file_name, frmt):
     '''
     compress src to `file_name`
     '''
+    # default destination path will be adjacent to source folder
+    if not file_name:
+        file_name = os.path.abspath(os.path.join(src, os.pardir, os.path.basename(src)))
+
     # get absolute path of this
     src_abs = os.path.abspath(src)
     try:
@@ -42,8 +46,5 @@ if __name__ == '__main__':
     # expected format
     parser.add_argument('-f', '--format', type=str, default=_FORMATS[0], help='Format from one of tar, gztar, zip, bztar, xztar')
 
-    # default destination path will be adjacent to source folder
     args = parser.parse_args()
-    if not args.destination:
-        args.destination = os.path.abspath(os.path.join(args.source, os.pardir, os.path.basename(args.source)))
     compress(args.source, args.destination, args.format)

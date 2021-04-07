@@ -1,9 +1,10 @@
 # ignore comressed files
 .tar
-.gztar
+.tar.gz
 .zip
-.bztar
-.xztar
+.tar.bz
+.tar.bz2
+.tar.xz
 
 # ignore test folder
 test/
