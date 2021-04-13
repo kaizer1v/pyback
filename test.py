@@ -10,12 +10,17 @@ Test for
 6.
 '''
 import os
+import shutil
 import unittest
 import pyback as pb
 
+# print(os.path.dirname(os.path.abspath(__file__)) == os.getcwd())
+
 class TestPB(unittest.TestCase):
 
-    _SOURCE = 'test/source'
+    _DIR_SOURCE = 'source_dir'
+    _DIR_SUBFOLDER = 'source_sub_dir'
+    _DIR_DESTINATION = 'dest_dir'
     _XTN = {
         'tar': 'tar',
         'gztar': 'tar.gz',
@@ -24,22 +29,62 @@ class TestPB(unittest.TestCase):
         'zip': 'zip'
     }
 
-    def sample(self):
-        self.assertEqual('test'.upper(), 'TEST')
+    @classmethod
+    def setUpClass(self):
+        '''
+        Create test source & destination directories
+
+        ./
+            - test.py
+            - source_dir
+                - source_sub_dir
+                    - sample_sub_file.txt
+                - sample_source.txt
+                - sample_source.md
+            - dest_dir
+
+        '''
+        print('Creating testing folders.')
+        if not os.path.exists(self._DIR_SOURCE):
+            os.mkdir(self._DIR_SOURCE)
+            os.chdir(self._DIR_SOURCE)
+            os.mkdir(self._DIR_SUBFOLDER)
+            os.chdir(self._DIR_SUBFOLDER)
+            with open('sample_sub_file.txt', 'w') as txt:
+                pass
+            os.chdir('../')
+            with open('sample.txt', 'w') as txt:
+                pass
+            with open('sample.md', 'w') as md:
+                pass
+            os.chdir('../')
+            os.mkdir(self._DIR_DESTINATION)
+
+            # create compressed files of each extension type
+            for ext in self._XTN:
+                pb.compress(self._DIR_SOURCE, os.path.join(self._DIR_DESTINATION, 'COMPRESSED'), ext)
+
+
+
+    @classmethod
+    def tearDownClass(self):
+        # delete test folders
+        shutil.rmtree(self._DIR_SOURCE)
+        shutil.rmtree(self._DIR_DESTINATION)
+        print('Testing folders deleted.')
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
 
     def test_compressed(self):
-        pb.compress(self._SOURCE, 'test_compressed', 'tar')
-        self.assertTrue(os.path.exists('test_compressed.tar'))
-
-    def test_no_dest(self):
-        pb.compress(self._SOURCE, '', 'tar')
-        self.assertTrue(os.path.exists(os.path.join('test', 'source.tar')))
-
-    def test_wrong_ext(self):
-        for frmt in pb._FORMATS:
-            print('Checking for source.{}'.format(self._XTN[frmt]))
-            pb.compress(self._SOURCE, '', frmt)
-            self.assertTrue(os.path.exists(os.path.join('test', 'source.{}'.format(self._XTN[frmt]))))
+        '''
+        Test if compression was created for each extension type
+        '''
+        for ext in self._XTN:
+            self.assertTrue(os.path.exists(os.path.join(self._DIR_DESTINATION, 'COMPRESSED.{}'.format(self._XTN[ext]))))
 
 if __name__ == '__main__':
     unittest.main()
